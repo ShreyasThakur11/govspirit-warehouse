@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GovSpirit Warehouse Intelligence Platform — Enterprise-grade warehouse analytics, KPIs, and AI-powered recommendations for government alcohol warehouses.">
+  <title>GovSpirit | Warehouse Intelligence Platform</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- GovSpirit CSS -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+
+  <!-- CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    /* Inline critical styles for initial render */
+    .loading-screen {
+      position: fixed; inset: 0;
+      background: #080a10;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 20px;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .loading-logo { font-size: 56px; animation: loadFloat 2s ease-in-out infinite; }
+    .loading-title { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .loading-sub { font-family: 'Inter', sans-serif; font-size: 13px; color: #4a5272; }
+    .loading-bar { width: 200px; height: 3px; background: #1a2030; border-radius: 3px; overflow: hidden; }
+    .loading-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #8b5cf6); border-radius: 3px; animation: loadBar 1.5s ease-in-out forwards; }
+    @keyframes loadBar { from { width: 0 } to { width: 100% } }
+    @keyframes loadFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+    /* Chart.js global defaults applied via JS */
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loading-screen">
+    <div class="loading-logo">🏛️</div>
+    <div class="loading-title">GovSpirit</div>
+    <div class="loading-sub">Warehouse Intelligence Platform</div>
+    <div class="loading-bar"><div class="loading-fill"></div></div>
+  </div>
+
+  <!-- App Shell -->
+  <div id="app">
+
+    <!-- Sidebar -->
+    <aside id="sidebar"></aside>
+
+    <!-- Main Wrapper -->
+    <div id="main-wrapper">
+
+      <!-- Topbar -->
+      <header id="topbar"></header>
+
+      <!-- Global Filter Panel -->
+      <div id="filter-panel"></div>
+
+      <!-- Page Content -->
+      <main id="main-content"></main>
+
+    </div>
+  </div>
+
+  <!-- Toast Container (injected by JS) -->
+
+  <!-- ================================================================
+       JavaScript — Load order: Core → Ingestion → Analytics → Pages → App
+       ================================================================ -->
+
+  <!-- Core (load order matters) -->
+  <script src="js/core/eventBus.js"></script>
+  <script src="js/core/utils.js"></script>
+  <script src="js/core/store.js"></script>
+  <script src="js/core/referenceData.js"></script>
+
+  <!-- Ingestion -->
+  <script src="js/ingestion/demoData.js"></script>
+  <script src="js/ingestion/fileReader.js"></script>
+  <script src="js/ingestion/listParser.js"></script>
+  <script src="js/ingestion/smartMapper.js"></script>
+  <script src="js/ingestion/dataTransformer.js"></script>
+
+  <!-- Analytics -->
+  <script src="js/analytics/kpiEngine.js"></script>
+  <script src="js/analytics/analyticsEngines.js"></script>
+  <script src="js/analytics/recommendationEngine.js"></script>
+
+  <!-- Filters -->
+  <script src="js/filters/filterManager.js"></script>
+
+  <!-- Pages -->
+  <script src="js/pages/input.js"></script>
+  <script src="js/pages/executive.js"></script>
+  <script src="js/pages/pages.js"></script>
+
+  <!-- App Bootstrap (last) -->
+  <script src="js/core/app.js"></script>
+
+  <script>
+    // ─── Chart.js Global Configuration ─────────────────────────────────────
+
+    if (typeof Chart !== 'undefined') {
+      Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+      Chart.defaults.font.size = 12;
+      Chart.defaults.color = '#8892b0';
+      Chart.defaults.borderColor = '#1e2840';
+      Chart.defaults.plugins.legend.display = false;
+      Chart.defaults.plugins.tooltip.backgroundColor = '#1a2030';
+      Chart.defaults.plugins.tooltip.titleColor = '#eef2ff';
+      Chart.defaults.plugins.tooltip.bodyColor = '#8892b0';
+      Chart.defaults.plugins.tooltip.borderColor = '#1e2840';
+      Chart.defaults.plugins.tooltip.borderWidth = 1;
+      Chart.defaults.plugins.tooltip.cornerRadius = 8;
+      Chart.defaults.plugins.tooltip.padding = 10;
+      Chart.defaults.animation.duration = 600;
+      Chart.defaults.animation.easing = 'easeOutQuart';
+    }
+
+    // ─── Theme sync with Chart.js ────────────────────────────────────────────
+
+    GovSpirit.EventBus.on(GovSpirit.Events.THEME_CHANGED, (theme) => {
+      const isLight = theme === 'light';
+      if (typeof Chart !== 'undefined') {
+        Chart.defaults.color = isLight ? '#4a5272' : '#8892b0';
+        Chart.defaults.borderColor = isLight ? '#dde3f0' : '#1e2840';
+        Chart.defaults.plugins.tooltip.backgroundColor = isLight ? '#ffffff' : '#1a2030';
+        Chart.defaults.plugins.tooltip.titleColor = isLight ? '#0f1728' : '#eef2ff';
+        Chart.defaults.plugins.tooltip.bodyColor = isLight ? '#4a5272' : '#8892b0';
+        Chart.defaults.plugins.tooltip.borderColor = isLight ? '#dde3f0' : '#1e2840';
+      }
+      // Re-render current page charts after theme change
+      const currentPage = GovSpirit.Store.getState().currentPage;
+      if (currentPage && currentPage !== 'input') {
+        setTimeout(() => GovSpirit.App.navigate(currentPage), 100);
+      }
+    });
+
+    // ─── Hide loading screen after app initializes ────────────────────────────
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loading = document.getElementById('loading-screen');
+        if (loading) {
+          loading.style.opacity = '0';
+          setTimeout(() => loading.remove(), 500);
+        }
+      }, 1200);
+    });
+
+    // ─── Handle window resize — re-render charts ──────────────────────────────
+
+    const debouncedResize = (() => {
+      let timer;
+      return () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          GovSpirit.EventBus.emit(GovSpirit.Events.CHART_RESIZE);
+        }, 300);
+      };
+    })();
+    window.addEventListener('resize', debouncedResize);
+
+    // ─── Global error boundary ────────────────────────────────────────────────
+
+    window.addEventListener('error', (e) => {
+      console.error('[GovSpirit] Uncaught error:', e.error);
+      if (typeof GovSpirit?.App?.showToast === 'function') {
+        GovSpirit.App.showToast('An error occurred. Check console for details.', 'error');
+      }
+    });
+
+    console.log(`
+╔══════════════════════════════════════════════════════════════╗
+║           GovSpirit Warehouse Intelligence Platform          ║
+║                      Enterprise Edition                      ║
+╠══════════════════════════════════════════════════════════════╣
+║  Type GovSpirit in console to inspect the API               ║
+║  GovSpirit.Store.getState() → full application state        ║
+║  GovSpirit.App.navigate('executive') → navigate to page     ║
+║  GovSpirit.DemoData.generate() → generate fresh demo data   ║
+╚══════════════════════════════════════════════════════════════╝
+    `);
+  </script>
+</body>
+</html>
