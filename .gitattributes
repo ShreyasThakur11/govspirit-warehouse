@@ -1,0 +1,28 @@
+# Normalise line endings so Windows and Unix contributors produce
+# identical diffs.
+* text=auto eol=lf
+
+*.html  text diff=html
+*.css   text diff=css
+*.js    text
+*.json  text
+*.md    text diff=markdown
+*.yml   text
+*.yaml  text
+*.svg   text
+
+# Binary assets
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.woff  binary
+*.woff2 binary
+*.xlsx  binary
+*.pdf   binary
+
+# Keep generated or vendored files out of language statistics
+docs/**            linguist-documentation
+assets/css/*.css   linguist-detectable
