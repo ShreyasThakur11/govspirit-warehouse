@@ -34,7 +34,7 @@ for (const ref of refs) {
   const dir = dirname(ref);
   const file = basename(ref);
 
-  let entries = [];
+  let entries;
   try {
     entries = readdirSync(dir);
   } catch {
