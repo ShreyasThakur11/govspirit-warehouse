@@ -20,6 +20,11 @@ If you are **deploying it**:
 
 7. [Deployment](deployment.md): GitHub Pages, self-hosting, air-gapped installs
 
+Two more, read as needed:
+
+- [Changelog](changelog.md): what changed in each release
+- [Roadmap](roadmap.md): what is planned, and what was ruled out
+
 ## Presenting or teaching from this
 
 [docs/presentation](presentation/) holds a slide deck covering the problem, the approach, the architecture and the results, plus speaker notes.
@@ -73,8 +78,8 @@ Nothing in this diagram crosses a network boundary. Every box runs in the browse
 
 |                                 |                                                |
 | ------------------------------- | ---------------------------------------------- |
-| Modules                         | 40 JavaScript files, 5 stylesheets             |
-| Source size                     | 15,318 lines of JavaScript and CSS             |
+| Modules                         | 41 JavaScript files, 5 stylesheets             |
+| Source size                     | 15,864 lines of JavaScript and CSS             |
 | Build step                      | None                                           |
 | Runtime dependencies            | Chart.js. Three more load only when you export |
 | Views                           | 11                                             |

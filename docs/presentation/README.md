@@ -38,7 +38,7 @@ there is no framework. The answer is on slide 4.
 
 ## Running the demonstration
 
-Open the application, choose **Demo data**, and let it load before you speak
+Open the application, choose **Open the sample dashboard**, and let it load before you speak
 again. It takes about two seconds.
 
 The generator is seeded, so the numbers on your screen are the numbers on

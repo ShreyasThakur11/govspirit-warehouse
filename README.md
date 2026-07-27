@@ -7,13 +7,16 @@ Everything runs in the browser. No upload, no server, no account.
 **[Open the application](https://shreyasthakur11.github.io/govspirit-warehouse/)** · [Documentation](docs/) · [Slides](docs/presentation/)
 
 [![CI](https://github.com/ShreyasThakur11/govspirit-warehouse/actions/workflows/ci.yml/badge.svg)](https://github.com/ShreyasThakur11/govspirit-warehouse/actions/workflows/ci.yml)
-[![Deploy](https://github.com/ShreyasThakur11/govspirit-warehouse/actions/workflows/deploy.yml/badge.svg)](https://github.com/ShreyasThakur11/govspirit-warehouse/actions/workflows/deploy.yml)
 [![WCAG 2.2 AA](https://img.shields.io/badge/WCAG%202.2-AA-0f6f62)](docs/accessibility.md)
-[![Build step](https://img.shields.io/badge/build%20step-none-0f6f62)](docs/architecture.md)
-[![Data leaves the browser](https://img.shields.io/badge/data%20leaves%20the%20browser-never-c07a2c)](#privacy)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 ---
+
+## Try it
+
+Open the [hosted version](https://shreyasthakur11.github.io/govspirit-warehouse/) and choose **Open the sample dashboard**. Nothing to install, nothing to prepare.
+
+There is also a sample file to download. It carries the headers a depot prints rather than the names this tool uses, so uploading it shows the column mapping doing real work.
 
 ## What it does
 
@@ -26,29 +29,23 @@ Everything runs in the browser. No upload, no server, no account.
 | Advise  | 9 rules producing ranked actions against a stated threshold                   |
 | Export  | CSV, Excel workbook, or a PDF of the current view                             |
 
-## Try it
+## What the numbers mean
 
-Open the [hosted version](https://shreyasthakur11.github.io/govspirit-warehouse/) and choose **Demo data**. The generator is seeded, so everyone sees the same warehouse.
+A metric with no supporting data reports `N/A` rather than a plausible default. Modelled figures say so, and every page carrying one shows a standing notice.
 
-Locally, clone and open `index.html`. There is no build step.
-
-```bash
-git clone https://github.com/ShreyasThakur11/govspirit-warehouse.git
-```
+[docs/metrics.md](docs/metrics.md) gives the formula and data requirement for each figure.
 
 ## Privacy
 
 Files are read with the browser's `FileReader` API and held in memory for the session. There is no backend to send them to. Closing the tab discards everything.
 
-The page fetches only a webfont and the charting library, both pinned with Subresource Integrity digests. Spreadsheet and PDF libraries load only if you export.
+## Run it locally
 
-## What the numbers mean
+```bash
+git clone https://github.com/ShreyasThakur11/govspirit-warehouse.git
+```
 
-A metric with no supporting data reports `N/A` rather than a plausible default. Without a cycle count file, inventory accuracy is blank and the health score is computed from the components that do have evidence, with that count shown.
-
-Modelled figures say so. A stock list alone produces a projected order history, and every page carrying it shows a standing notice.
-
-[docs/metrics.md](docs/metrics.md) gives the formula and data requirement for each figure.
+Open `index.html`. There is no build step, and that is deliberate: a depot can keep this folder on a shared drive and it will still open in five years without a toolchain.
 
 ## Documentation
 
@@ -63,21 +60,15 @@ Modelled figures say so. A stock list alone produces a projected order history, 
 | [Deployment](docs/deployment.md)       | GitHub Pages, self-hosting, air-gapped installs      |
 | [Slides](docs/presentation/)           | An 11 slide deck with speaker notes                  |
 
-## Built with
-
-Vanilla JavaScript. No framework, no build step. [Chart.js](https://www.chartjs.org/) draws the charts; [SheetJS](https://sheetjs.com/), [jsPDF](https://github.com/parallax/jsPDF) and [html2canvas](https://html2canvas.hertzen.com/) load on demand for import and export.
-
-The absence of a build step is deliberate. A depot can keep this folder on a shared drive and it will still open in five years without a toolchain.
-
 ## Contributing
 
 ```bash
 npm install
-npm run check    # lint, format, contrast, stylesheet coverage, shipping completeness
+npm run check
 ```
 
-[CONTRIBUTING.md](CONTRIBUTING.md) for conventions. [SECURITY.md](SECURITY.md) to report a vulnerability.
+[CONTRIBUTING.md](.github/CONTRIBUTING.md) for conventions. [SECURITY.md](.github/SECURITY.md) to report a vulnerability.
 
 ## Licence
 
-[MIT](LICENSE). The reference sales dataset is synthetic and bears no relation to any real depot.
+[MIT](LICENSE). The reference dataset is synthetic and bears no relation to any real depot.

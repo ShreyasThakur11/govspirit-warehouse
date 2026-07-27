@@ -4,6 +4,38 @@ Notable changes to this project. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Sample depot on the import page: one button loads the dataset and opens the
+  dashboard, and four more open the view that best shows a given feature
+- Downloadable sample file written with the headers a depot prints, so the
+  column mapper can be tried without anyone supplying a file of their own
+- Smoke test coverage for the sample: every header must resolve to its intended
+  field at high confidence, and a write, re-read and pipeline round trip must
+  preserve both the row count and the bottle count
+- Smoke test check for clipped text anywhere in the sidebar or topbar
+
+### Fixed
+
+- Inventory rows were de-duplicated on SKU plus bin even when the file carried
+  no bin column. `bin_id` falls back to the rack in that case, so a product held
+  in several places in one rack collapsed to a single line and the rest of the
+  stock vanished from every total. On the sample file this understated the
+  holding by 4,141 bottles
+- The sidebar tagline overflowed its container instead of fitting, because a
+  flex child defaults to `min-width: auto`
+- Every route change left a focus ring on the page heading. The router focuses
+  it so screen readers announce the new view, and Chromium counts that as
+  focus-visible
+
+### Changed
+
+- Community and planning documents moved out of the repository root, into
+  `.github/` and `docs/`
+- eslint 10, and the pinned GitHub Actions raised to their current majors
+
 ## [2.0.0] - 2026-07-26
 
 A rebuild. Version 1 worked as a prototype but carried faults that made it
