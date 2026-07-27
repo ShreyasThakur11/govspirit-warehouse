@@ -158,7 +158,15 @@
     return {
       responsive: true,
       maintainAspectRatio: false,
-      resizeDelay: 120,
+      // Deliberately not debounced. A resizeDelay leaves a queued callback
+      // behind, and destroy() nulls chart.canvas, so a chart torn down inside
+      // that window throws "Cannot read properties of null (reading
+      // 'ownerDocument')" from Chart.js itself. Resizing the window while
+      // changing view is enough to hit it, and the application's global error
+      // handler then reports a fault the reader can do nothing about.
+      // Measured against 4.4.3 and 4.5.1: with a 120ms delay, five of six
+      // destroy-during-resize cycles threw; at 0, none did.
+      resizeDelay: 0,
       animation: Dom.prefersReducedMotion() ? false : { duration: 500, easing: 'easeOutQuart' },
       interaction: {
         mode: opts.noScales ? 'nearest' : 'index',

@@ -24,6 +24,11 @@ Notable changes to this project. Format based on
   in several places in one rack collapsed to a single line and the rest of the
   stock vanished from every total. On the sample file this understated the
   holding by 4,141 bottles
+- Charts used a 120ms resize debounce, which leaves a queued callback behind.
+  `destroy()` nulls the canvas, so tearing a chart down inside that window threw
+  from Chart.js, and the application reported an error the reader could do
+  nothing about. Resizing the window while changing view was enough to hit it.
+  Present in Chart.js 4.4.3 and 4.5.1 alike, so the debounce is now off
 - Navigating twice inside one frame let the first page run its deferred
   `mount()` against the second page's DOM. Chart.js was left holding detached
   canvases and threw from its own resize loop, which surfaced as a cluster of

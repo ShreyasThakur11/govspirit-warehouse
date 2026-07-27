@@ -58,7 +58,16 @@ try {
   page.on('console', (message) => {
     if (message.type() === 'error') consoleErrors.push(message.text());
   });
-  page.on('pageerror', (error) => pageErrors.push(error.message));
+  page.on('pageerror', (error) => {
+    // Without the frames these read as "something threw somewhere", which is
+    // exactly the class of failure that is hardest to chase on a CI runner.
+    const frames = (error.stack || '')
+      .split('\n')
+      .slice(1, 4)
+      .map((line) => line.trim())
+      .join(' | ');
+    pageErrors.push(frames ? `${error.message} [${frames}]` : error.message);
+  });
   page.on('requestfailed', (request) => {
     // Third-party CDN failures are reported but not fatal: the application is
     // designed to degrade when they are unreachable, and CI networks vary.
