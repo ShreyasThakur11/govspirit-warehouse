@@ -99,15 +99,116 @@ try {
   if (!booted.heading) fail('import view rendered no heading');
   else pass(`landed on "${booted.heading}"`);
 
-  /* ── Demo dataset ─────────────────────────────────────────────────────── */
+  /* ── Sample file ──────────────────────────────────────────────────────────
+     The download is the only path that feeds the mapper without a human
+     picking a file, so assert that every depot header it writes still resolves
+     to the field it is meant to. A rename in the alias table would otherwise
+     silently downgrade the sample to fuzzy matching.                         */
 
-  // The demo button lives inside a hidden tab panel, so select the tab first.
-  // This exercises the tab pattern as a side effect.
-  await page.click('#tab-demo');
-  await page.waitForSelector('#panel-demo:not([hidden])', { timeout: 5000 });
-  pass('demo tab opens its panel');
+  const mapped = await page.evaluate(() => {
+    const rows = window.GovSpirit.SampleFile.rows();
+    const headers = window.GovSpirit.SampleFile.HEADERS;
+    return {
+      rowCount: rows.length,
+      headers,
+      mapping: window.GovSpirit.SmartMapper.autoMap(headers),
+      sampleDate: rows[0]['GRN Date'],
+    };
+  });
 
-  await page.click('#btn-demo');
+  const EXPECTED_FIELDS = {
+    'Item Code': 'sku_id',
+    'Product Description': 'brand',
+    'Type of Liquor': 'category',
+    'Pack Size': 'size',
+    'Closing Stock': 'quantity',
+    'Issue Price': 'price',
+    Godown: 'zone',
+    'Rack No': 'rack',
+    'Party Name': 'supplier',
+    'GRN Date': 'received_date',
+  };
+
+  if (mapped.rowCount === 0) fail('sample file produced no rows');
+  else pass(`sample file: ${mapped.rowCount} rows, ${mapped.headers.length} columns`);
+
+  let mappingClean = true;
+  for (const [header, expected] of Object.entries(EXPECTED_FIELDS)) {
+    const entry = mapped.mapping?.[header];
+    if (entry?.fieldId !== expected) {
+      fail(`sample header "${header}" mapped to ${entry?.fieldId || 'nothing'}, want ${expected}`);
+      mappingClean = false;
+    } else if (entry.confidence !== 'high') {
+      fail(`sample header "${header}" matched ${expected} at ${entry.confidence} confidence`);
+      mappingClean = false;
+    }
+  }
+  if (mappingClean) {
+    pass(`all ${Object.keys(EXPECTED_FIELDS).length} sample headers map at high confidence`);
+  }
+
+  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(mapped.sampleDate || '')) {
+    fail(`sample dates are not day first: ${mapped.sampleDate}`);
+  } else pass(`sample dates are day first (${mapped.sampleDate})`);
+
+  // Serialise, re-read and run the pipeline, which is what happens when the
+  // download is dropped back onto the uploader. Nothing here is stubbed.
+  const roundTrip = await page.evaluate(() => {
+    const G = window.GovSpirit;
+    const rows = G.SampleFile.rows();
+    const csv = G.Exporters.toCSV(rows, G.SampleFile.HEADERS);
+    // parseCSV returns a sheet list, the same shape a workbook produces.
+    const sheet = G.FileReader.parseCSV(csv, 'sample.csv')[0];
+    const canonical = G.SmartMapper.applyMapping(sheet.data, G.SmartMapper.autoMap(sheet.columns));
+
+    G.Store.clearAllData();
+    G.Store.setRawData('inventory', canonical);
+    const result = G.Pipeline.run({ source: 'Round trip' });
+    const state = G.Store.getState();
+
+    return {
+      ok: result.ok,
+      parsedRows: sheet.data.length,
+      detectedType: sheet.type ?? null,
+      canonicalRows: canonical.length,
+      inventory: state.processedData.inventory.length,
+      value: state.kpis.inventoryValue,
+      bottles: state.kpis.totalBottles,
+      writtenBottles: rows.reduce((sum, row) => sum + Number(row['Closing Stock'] || 0), 0),
+      missingRequired: G.SmartMapper.missingRequired(G.SmartMapper.autoMap(G.SampleFile.HEADERS)),
+      firstDate: canonical[0]?.received_date ?? null,
+    };
+  });
+
+  if (roundTrip.missingRequired.length) {
+    fail(`sample file is missing required fields: ${roundTrip.missingRequired.join(', ')}`);
+  } else pass('sample file satisfies every required field');
+
+  if (!roundTrip.ok || roundTrip.inventory !== mapped.rowCount) {
+    fail(
+      `sample round trip lost rows: wrote ${mapped.rowCount}, read ${roundTrip.parsedRows}, ` +
+        `mapped ${roundTrip.canonicalRows}, processed ${roundTrip.inventory}`
+    );
+  } else pass(`sample round trip preserved all ${roundTrip.inventory} rows through the pipeline`);
+
+  if (!Number.isFinite(roundTrip.value) || roundTrip.value <= 0) {
+    fail(`sample round trip produced no stock value: ${roundTrip.value}`);
+  } else pass(`sample round trip valued the stock at ${Math.round(roundTrip.value)}`);
+
+  // Row counts can survive while quantities quietly do not, so compare the
+  // bottles written into the file against the bottles the dashboard reports.
+  if (roundTrip.bottles !== roundTrip.writtenBottles) {
+    fail(
+      `sample round trip lost stock: wrote ${roundTrip.writtenBottles} bottles, ` +
+        `dashboard reports ${roundTrip.bottles}`
+    );
+  } else pass(`sample round trip preserved all ${roundTrip.bottles} bottles`);
+
+  await page.reload({ waitUntil: 'networkidle2' });
+
+  /* ── Sample depot ─────────────────────────────────────────────────────── */
+
+  await page.click('#btn-sample-open');
   await page.waitForFunction(() => window.GovSpirit.Store.getState().isDataLoaded, {
     timeout: 20000,
   });

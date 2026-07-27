@@ -100,6 +100,155 @@
   display: none;
 }
 
+/* ── Sample depot ────────────────────────────────────────────────────────
+   The first block on the import page. A solid rule on the leading edge is the
+   same treatment the sidebar gives the active item, so this reads as the
+   recommended way in rather than a promotion. */
+.sample {
+  margin-bottom: var(--space-8);
+  padding: var(--space-6);
+  background: var(--surface-card);
+  border: 1px solid var(--line);
+  border-inline-start: 3px solid var(--accent);
+  border-radius: var(--radius-lg);
+}
+
+.sample-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sample-title {
+  margin-bottom: var(--space-2);
+  color: var(--ink-strong);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.sample-lead {
+  max-width: 60ch;
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+}
+
+.sample-buttons {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: var(--space-3);
+}
+
+.sample-note {
+  max-width: 76ch;
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+/* Two columns rather than auto-fit. With four stops, auto-fit leaves a single
+   card stranded on its own row at most desktop widths. */
+.sample-tour {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  list-style: none;
+}
+
+@media (max-width: 640px) {
+  .sample-tour {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sample-stop {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color var(--transition),
+    background-color var(--transition);
+}
+
+.sample-stop:hover,
+.sample-stop:focus-visible {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.sample-stop:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.sample-stop-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--accent-ink);
+}
+
+.sample-stop-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sample-stop-label {
+  color: var(--ink-strong);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+}
+
+.sample-stop-detail {
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.sample-stop-arrow {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  color: var(--ink-muted);
+}
+
+.sample-stop:hover .sample-stop-arrow,
+.sample-stop:focus-visible .sample-stop-arrow {
+  color: var(--accent-ink);
+}
+
+/* Stack the call to action under the copy once the two no longer sit side by
+   side comfortably. */
+@media (max-width: 720px) {
+  .sample {
+    padding: var(--space-5);
+  }
+
+  .sample-buttons {
+    width: 100%;
+  }
+
+  .sample-buttons .btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
 /* ── Drop zone ──────────────────────────────────────────────────────────── */
 .dropzone {
   display: flex;

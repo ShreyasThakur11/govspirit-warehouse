@@ -1,8 +1,8 @@
 /**
  * GovSpirit Import page.
  *
- * Three ways in: upload a spreadsheet, paste a free-text list, or load the
- * demo dataset. All three converge on the same analytics pipeline.
+ * Three ways in: open the sample depot, upload a spreadsheet, or paste a
+ * free-text list. All three converge on the same analytics pipeline.
  *
  * Tabs follow the WAI-ARIA tabs pattern (roving tabindex, arrow-key
  * navigation, Home/End) rather than being buttons that merely look like tabs.
@@ -23,6 +23,7 @@
     DataValidator,
     ReferenceData,
     DemoData,
+    SampleFile,
     Pipeline,
     Charts,
     Exporters,
@@ -39,6 +40,7 @@
     'DataValidator',
     'ReferenceData',
     'DemoData',
+    'SampleFile',
     'Pipeline',
     'Charts',
     'Exporters'
@@ -49,7 +51,36 @@
   const TABS = [
     { id: 'upload', label: 'Upload a file', icon: 'fileSpreadsheet', flag: 'Recommended' },
     { id: 'paste', label: 'Paste a list', icon: 'edit' },
-    { id: 'demo', label: 'Demo data', icon: 'database' },
+  ];
+
+  /* Entry points into the sample depot. Each one loads the same dataset and
+     lands on the view that best shows what that part of the tool does, so a
+     first-time reader can follow the work rather than hunt for it. */
+  const SAMPLE_TOUR = [
+    {
+      view: 'executive',
+      icon: 'dashboard',
+      label: 'Executive summary',
+      detail: 'Stock value, fill rate and the health score, with its components broken out',
+    },
+    {
+      view: 'warehouse',
+      icon: 'warehouse',
+      label: 'Warehouse map',
+      detail: 'Utilisation by zone and rack, down to the individual bin',
+    },
+    {
+      view: 'recommendations',
+      icon: 'lightbulb',
+      label: 'Recommendations',
+      detail: 'Ranked actions, each showing the rule and the threshold that triggered it',
+    },
+    {
+      view: 'stockAging',
+      icon: 'clock',
+      label: 'Stock aging',
+      detail: 'What has not moved, for how long, and what it is worth',
+    },
   ];
 
   const EXAMPLE_TEXT = `Royal Stag 180ml 200 bottles Zone A
@@ -102,6 +133,57 @@ beer 330ml 100 bottles Zone A`;
             is ever uploaded to a server.
           </p>
         </div>
+
+        <!-- ── Sample depot ───────────────────────────────────────────────
+             Placed above the tabs on purpose. Most first-time readers have no
+             spreadsheet to hand, and asking them to find one before they can
+             see anything is the fastest way to lose them. -->
+        <section class="sample" aria-labelledby="sample-heading">
+          <div class="sample-head">
+            <div>
+              <h2 class="sample-title" id="sample-heading">Start with the sample depot</h2>
+              <p class="sample-lead">
+                A complete synthetic warehouse built from the ${ReferenceData.SKUS.length} reference
+                brands: stock across every zone, three months of orders, dispatch records, a bin
+                level layout, a damage register and cycle counts. The generator is seeded, so the
+                figures are the same on every machine.
+              </p>
+            </div>
+            <div class="sample-buttons">
+              <button type="button" class="btn btn-primary btn-lg" id="btn-sample-open">
+                ${Icons.render('dashboard', { size: 18 })} Open the sample dashboard
+              </button>
+              <button type="button" class="btn btn-subtle" id="btn-sample-download">
+                ${Icons.render('download', { size: 16 })} Download the sample file
+              </button>
+            </div>
+          </div>
+
+          <p class="sample-note">
+            The download carries the headers a depot actually prints, not the names this tool uses
+            internally, so opening it puts the column mapper through the same work your own file
+            will.
+          </p>
+
+          <ul class="sample-tour">
+            ${SAMPLE_TOUR.map(
+              (stop) => html`
+                <li>
+                  <button type="button" class="sample-stop" data-sample-view="${stop.view}">
+                    <span class="sample-stop-icon">${Icons.render(stop.icon, { size: 18 })}</span>
+                    <span class="sample-stop-text">
+                      <span class="sample-stop-label">${stop.label}</span>
+                      <span class="sample-stop-detail">${stop.detail}</span>
+                    </span>
+                    ${Icons.render('arrowRight', { size: 16, className: 'sample-stop-arrow' })}
+                  </button>
+                </li>
+              `
+            )}
+          </ul>
+        </section>
+
+        <h2 class="section-heading">Or load your own data</h2>
 
         <div class="tabs" role="tablist" aria-label="Ways to load data">
           ${TABS.map(
@@ -211,30 +293,6 @@ beer 330ml 100 bottles Zone A`;
           </div>
 
           <div id="parsed-section" hidden></div>
-        </div>
-
-        <!-- ── Demo ───────────────────────────────────────────────────── -->
-        <div class="tab-panel" role="tabpanel" id="panel-demo" aria-labelledby="tab-demo" hidden>
-          <div class="dropzone" style="cursor:default">
-            <div>
-              ${Icons.render('database', { size: 34, className: 'dropzone-icon' })}
-              <span class="dropzone-title">Explore with a full demo warehouse</span>
-              <span class="dropzone-hint">
-                A coherent synthetic dataset: 100+ SKUs, 30 hotels, 90 days of orders, dispatch
-                records, a bin-level layout, damage register and cycle counts.
-              </span>
-              <span class="dropzone-note">
-                The generator is seeded, so the same dataset is produced every time. Useful for
-                screenshots, demos and bug reports.
-              </span>
-            </div>
-          </div>
-          <div class="commit-bar">
-            <button type="button" class="btn btn-primary btn-lg" id="btn-demo">
-              Load the demo dataset
-            </button>
-            <p class="commit-note">Nothing is uploaded and nothing is stored.</p>
-          </div>
         </div>
 
         <div class="notice mt-3">
@@ -751,6 +809,17 @@ beer 330ml 100 bottles Zone A`;
   /* ══════════════════════════════════════════════════════════════════════
      PASTE FLOW
      ══════════════════════════════════════════════════════════════════ */
+
+  function bindSample() {
+    disposers.push(Dom.on(Dom.byId('btn-sample-open'), 'click', () => openSample('executive')));
+    disposers.push(Dom.on(Dom.byId('btn-sample-download'), 'click', downloadSample));
+
+    document.querySelectorAll('[data-sample-view]').forEach((button) => {
+      disposers.push(
+        Dom.on(button, 'click', () => openSample(button.getAttribute('data-sample-view')))
+      );
+    });
+  }
 
   function bindPaste() {
     const textarea = Dom.byId('list-input');
@@ -1346,33 +1415,61 @@ beer 330ml 100 bottles Zone A`;
     Components.toast(`${Format.number(rowCount)} rows loaded. Dashboard ready.`, 'success');
   }
 
-  function loadDemo() {
-    const button = Dom.byId('btn-demo');
-    if (button) {
+  /**
+   * Generate the sample depot and land on a chosen view.
+   *
+   * @param {string} view Router view to open once the pipeline has run.
+   */
+  function openSample(view) {
+    const buttons = [
+      Dom.byId('btn-sample-open'),
+      ...document.querySelectorAll('[data-sample-view]'),
+    ].filter(Boolean);
+
+    buttons.forEach((button) => {
       button.disabled = true;
-      button.textContent = 'Generating…';
-    }
+    });
+    Components.toast('Building the sample depot…', 'info', 4000);
 
     Dom.nextFrame(() => {
       Store.clearAllData();
       const dataset = DemoData.generate();
       Object.entries(dataset).forEach(([key, rows]) => Store.setRawData(key, rows));
 
-      const result = Pipeline.run({ source: 'Demo dataset' });
-      if (button) {
+      const result = Pipeline.run({ source: 'Sample depot' });
+      buttons.forEach((button) => {
         button.disabled = false;
-        button.textContent = 'Load the demo dataset';
-      }
+      });
 
       if (!result.ok) {
-        Components.toast('Could not generate the demo dataset.', 'error');
+        Components.toast('Could not build the sample depot.', 'error');
         return;
       }
 
-      GovSpirit.Router.navigate('executive');
+      GovSpirit.Router.navigate(view);
       Components.toast(
-        `Demo warehouse loaded: ${Format.number(dataset.inventory.length)} inventory lines.`,
+        `Sample depot loaded: ${Format.number(dataset.inventory.length)} inventory lines.`,
         'success'
+      );
+    });
+  }
+
+  /**
+   * Write the sample out as a spreadsheet the uploader can read back, so the
+   * mapping step can be tried without anyone needing a file of their own.
+   */
+  function downloadSample() {
+    const button = Dom.byId('btn-sample-download');
+    if (button) button.disabled = true;
+
+    Dom.nextFrame(() => {
+      const rows = SampleFile.rows();
+      Exporters.downloadCSV(rows, 'govspirit-sample-depot', SampleFile.HEADERS);
+      if (button) button.disabled = false;
+      Components.toast(
+        `Sample file saved: ${Format.number(rows.length)} rows. Upload it above to see the column mapping.`,
+        'success',
+        7000
       );
     });
   }
@@ -1385,7 +1482,7 @@ beer 330ml 100 bottles Zone A`;
     bindTabs();
     bindUpload();
     bindPaste();
-    disposers.push(Dom.on(Dom.byId('btn-demo'), 'click', loadDemo));
+    bindSample();
     selectTab(activeTab);
   }
 
