@@ -71,7 +71,11 @@
 
       const rackId = text(pick(row, ['rack_id', 'rack', 'shelf'])).toUpperCase();
       const zone = text(pick(row, ['zone', 'area', 'section']) || rackId.charAt(0)).toUpperCase();
-      const binId = text(pick(row, ['bin_id', 'bin', 'slot']) || rackId).toUpperCase();
+      // Keep "the file gave us a bin" separate from "we borrowed the rack".
+      // The fallback is fine for display, but treating it as a real slot makes
+      // every line in a rack look like the same holding.
+      const declaredBin = text(pick(row, ['bin_id', 'bin', 'slot'])).toUpperCase();
+      const binId = declaredBin || rackId;
 
       const received = Format.parseDate(pick(row, ['last_received_date', 'received_date', 'date']));
       const dispatched = Format.parseDate(pick(row, ['last_dispatched_date', 'dispatch_date']));
@@ -112,9 +116,16 @@
 
       // De-duplicate on SKU + bin: the same product in the same slot twice is a
       // data-entry artefact, not two distinct holdings.
-      const key = `${record.sku_id}__${record.bin_id}`;
-      if (seen.has(key)) return;
-      seen.add(key);
+      //
+      // Only when the file actually carries a bin. Plenty of depot exports stop
+      // at the rack, and against an inferred bin this key collapses to the SKU,
+      // so a product held in four places became one line and the other three
+      // quantities disappeared from every total on the dashboard.
+      if (declaredBin) {
+        const key = `${record.sku_id}__${record.bin_id}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+      }
       output.push(record);
     });
 

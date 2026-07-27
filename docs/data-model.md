@@ -126,6 +126,10 @@ Records are keyed on `sku_id` plus `bin_id`. The same product appearing twice
 in one bin is a data-entry artefact, not two distinct holdings, so the second
 occurrence is dropped and the validator reports the count.
 
+This applies only when the file supplies a bin. Many depot exports stop at the
+rack, and `bin_id` then borrows the rack value, which would make every line in
+that rack look like one holding. Where the bin is inferred, all rows are kept.
+
 ## Date handling
 
 Excise exports carry dates in at least four shapes. All are accepted:
