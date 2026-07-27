@@ -24,6 +24,10 @@ Notable changes to this project. Format based on
   in several places in one rack collapsed to a single line and the rest of the
   stock vanished from every total. On the sample file this understated the
   holding by 4,141 bottles
+- Navigating twice inside one frame let the first page run its deferred
+  `mount()` against the second page's DOM. Chart.js was left holding detached
+  canvases and threw from its own resize loop, which surfaced as a cluster of
+  uncaught `ownerDocument` errors with nothing nearby to explain them
 - The sidebar tagline overflowed its container instead of fitting, because a
   flex child defaults to `min-width: auto`
 - Every route change left a focus ring on the page heading. The router focuses

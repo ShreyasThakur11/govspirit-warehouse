@@ -256,8 +256,21 @@ try {
 
     for (const view of VIEWS) {
       await page.evaluate((name) => window.GovSpirit.Router.navigate(name), view);
-      // Views mount charts on the next frame, so allow a beat before measuring.
-      await new Promise((resolve) => setTimeout(resolve, 350));
+
+      // Views mount charts a frame after the markup lands. Waiting on the
+      // condition rather than on a fixed delay keeps this honest on a loaded
+      // CI runner, where a fixed 350ms is sometimes not enough and the run
+      // fails on views that were merely slow.
+      await page
+        .waitForFunction(
+          () => {
+            const main = document.getElementById('main-content');
+            if (!main || !main.querySelector('h1')) return false;
+            return [...main.querySelectorAll('canvas')].every((c) => c.width > 0);
+          },
+          { timeout: 10000, polling: 50 }
+        )
+        .catch(() => {}); // fall through to the assertions, which report properly
 
       const result = await page.evaluate(() => {
         const main = document.getElementById('main-content');

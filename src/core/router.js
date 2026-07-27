@@ -73,6 +73,13 @@
   let currentModule = null;
   let suppressHashHandling = false;
 
+  /* Incremented on every navigation. mount() runs a frame late so charts can
+     measure a laid-out container, and without this a second navigation inside
+     that frame lets the previous page mount itself over the new page's DOM.
+     Chart.js then holds canvases that are already detached and throws from its
+     own resize loop, well away from anything that looks responsible. */
+  let navigationToken = 0;
+
   const isKnown = (pageId) => Object.prototype.hasOwnProperty.call(PAGES, pageId);
 
   function pageFromHash() {
@@ -128,6 +135,7 @@
 
     currentPage = target;
     currentModule = module;
+    const token = (navigationToken += 1);
     Store.setCurrentPage(target);
 
     Dom.setBusy(main, true);
@@ -151,6 +159,8 @@
 
     // Mount after paint so charts measure a laid-out container.
     Dom.nextFrame(() => {
+      // A newer navigation has already replaced this page's DOM.
+      if (token !== navigationToken) return;
       try {
         module.mount?.(context);
       } catch (err) {
