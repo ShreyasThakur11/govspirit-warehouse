@@ -37,7 +37,7 @@
     "check": "npm run lint && npm run format:check && npm run check:contrast && npm run check:classes"
   },
   "devDependencies": {
-    "@eslint/js": "^9.18.0",
+    "@eslint/js": "^10.0.1",
     "eslint": "^9.18.0",
     "prettier": "^3.4.2"
   },
