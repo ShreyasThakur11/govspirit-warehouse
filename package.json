@@ -32,7 +32,9 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run lint && npm run format:check"
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:classes": "node scripts/check-classes.mjs",
+    "check": "npm run lint && npm run format:check && npm run check:contrast && npm run check:classes"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",

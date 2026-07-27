@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "govspirit",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", ".", "--listen", "4173", "--no-clipboard"],
+      "port": 4173
+    }
+  ]
+}

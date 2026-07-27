@@ -1,198 +1,198 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="GovSpirit Warehouse Intelligence Platform — Enterprise-grade warehouse analytics, KPIs, and AI-powered recommendations for government alcohol warehouses.">
-  <title>GovSpirit | Warehouse Intelligence Platform</title>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>GovSpirit · Excise Warehouse Intelligence</title>
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta
+      name="description"
+      content="Warehouse analytics for state excise depots. Reads your stock spreadsheet in the browser and returns KPIs, a storage plan and prioritised actions. No upload, no server, no account."
+    />
+    <meta name="theme-color" content="#111412" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="author" content="Shreyas Thakur" />
+    <link rel="canonical" href="https://shreyasthakur11.github.io/govspirit-warehouse/" />
 
-  <!-- GovSpirit CSS -->
-  <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="stylesheet" href="assets/css/components.css">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="GovSpirit Warehouse Intelligence" />
+    <meta
+      property="og:description"
+      content="Turn a warehouse stock spreadsheet into KPIs, a storage plan and prioritised actions. Runs entirely in the browser."
+    />
+    <meta property="og:url" content="https://shreyasthakur11.github.io/govspirit-warehouse/" />
 
-  <!-- CDN Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3.5 13 16 4.5 28.5 13v13.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V13Z' fill='none' stroke='%230f6f62' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cpath d='M10.5 23v-3.5M16 23v-6' stroke='%230f6f62' stroke-width='2.4' stroke-linecap='round' opacity='0.55'/%3E%3Cpath d='M21.5 23v-8.5' stroke='%23c07a2c' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
 
-  <style>
-    /* Inline critical styles for initial render */
-    .loading-screen {
-      position: fixed; inset: 0;
-      background: #080a10;
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 20px;
-      z-index: 9999;
-      transition: opacity 0.5s ease;
-    }
-    .loading-logo { font-size: 56px; animation: loadFloat 2s ease-in-out infinite; }
-    .loading-title { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #6366f1, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .loading-sub { font-family: 'Inter', sans-serif; font-size: 13px; color: #4a5272; }
-    .loading-bar { width: 200px; height: 3px; background: #1a2030; border-radius: 3px; overflow: hidden; }
-    .loading-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #8b5cf6); border-radius: 3px; animation: loadBar 1.5s ease-in-out forwards; }
-    @keyframes loadBar { from { width: 0 } to { width: 100% } }
-    @keyframes loadFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    <!--
+      Inter is loaded without blocking the first paint. The page renders in the
+      system UI font immediately and swaps when the webfont arrives, so a slow
+      font CDN can no longer delay the interface.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    </noscript>
 
-    /* Chart.js global defaults applied via JS */
-    canvas { display: block; }
-  </style>
-</head>
-<body>
+    <!-- Stylesheets are layered: tokens, base, layout, components, pages. -->
+    <link rel="stylesheet" href="assets/css/01-tokens.css" />
+    <link rel="stylesheet" href="assets/css/02-base.css" />
+    <link rel="stylesheet" href="assets/css/03-layout.css" />
+    <link rel="stylesheet" href="assets/css/04-components.css" />
+    <link rel="stylesheet" href="assets/css/05-pages.css" />
 
-  <!-- Loading Screen -->
-  <div class="loading-screen" id="loading-screen">
-    <div class="loading-logo">🏛️</div>
-    <div class="loading-title">GovSpirit</div>
-    <div class="loading-sub">Warehouse Intelligence Platform</div>
-    <div class="loading-bar"><div class="loading-fill"></div></div>
-  </div>
+    <!--
+      Chart.js is the only third-party script fetched up front, pinned with an
+      integrity digest. SheetJS, jsPDF and html2canvas total roughly 1.4 MB and
+      are fetched on first use by src/ui/exporters.js instead.
+    -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"
+      integrity="sha384-JUh163oCRItcbPme8pYnROHQMC6fNKTBWtRG3I3I0erJkzNgL7uxKlNwcrcFKeqF"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+      defer
+    ></script>
 
-  <!-- App Shell -->
-  <div id="app">
-
-    <!-- Sidebar -->
-    <aside id="sidebar"></aside>
-
-    <!-- Main Wrapper -->
-    <div id="main-wrapper">
-
-      <!-- Topbar -->
-      <header id="topbar"></header>
-
-      <!-- Global Filter Panel -->
-      <div id="filter-panel"></div>
-
-      <!-- Page Content -->
-      <main id="main-content"></main>
-
-    </div>
-  </div>
-
-  <!-- Toast Container (injected by JS) -->
-
-  <!-- ================================================================
-       JavaScript — Load order: Core → Ingestion → Analytics → Pages → App
-       ================================================================ -->
-
-  <!-- Core (load order matters) -->
-  <script src="js/core/eventBus.js"></script>
-  <script src="js/core/utils.js"></script>
-  <script src="js/core/store.js"></script>
-  <script src="js/core/referenceData.js"></script>
-
-  <!-- Ingestion -->
-  <script src="js/ingestion/demoData.js"></script>
-  <script src="js/ingestion/fileReader.js"></script>
-  <script src="js/ingestion/listParser.js"></script>
-  <script src="js/ingestion/smartMapper.js"></script>
-  <script src="js/ingestion/dataTransformer.js"></script>
-
-  <!-- Analytics -->
-  <script src="js/analytics/kpiEngine.js"></script>
-  <script src="js/analytics/analyticsEngines.js"></script>
-  <script src="js/analytics/recommendationEngine.js"></script>
-
-  <!-- Filters -->
-  <script src="js/filters/filterManager.js"></script>
-
-  <!-- Pages -->
-  <script src="js/pages/input.js"></script>
-  <script src="js/pages/executive.js"></script>
-  <script src="js/pages/pages.js"></script>
-
-  <!-- App Bootstrap (last) -->
-  <script src="js/core/app.js"></script>
-
-  <script>
-    // ─── Chart.js Global Configuration ─────────────────────────────────────
-
-    if (typeof Chart !== 'undefined') {
-      Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
-      Chart.defaults.font.size = 12;
-      Chart.defaults.color = '#8892b0';
-      Chart.defaults.borderColor = '#1e2840';
-      Chart.defaults.plugins.legend.display = false;
-      Chart.defaults.plugins.tooltip.backgroundColor = '#1a2030';
-      Chart.defaults.plugins.tooltip.titleColor = '#eef2ff';
-      Chart.defaults.plugins.tooltip.bodyColor = '#8892b0';
-      Chart.defaults.plugins.tooltip.borderColor = '#1e2840';
-      Chart.defaults.plugins.tooltip.borderWidth = 1;
-      Chart.defaults.plugins.tooltip.cornerRadius = 8;
-      Chart.defaults.plugins.tooltip.padding = 10;
-      Chart.defaults.animation.duration = 600;
-      Chart.defaults.animation.easing = 'easeOutQuart';
-    }
-
-    // ─── Theme sync with Chart.js ────────────────────────────────────────────
-
-    GovSpirit.EventBus.on(GovSpirit.Events.THEME_CHANGED, (theme) => {
-      const isLight = theme === 'light';
-      if (typeof Chart !== 'undefined') {
-        Chart.defaults.color = isLight ? '#4a5272' : '#8892b0';
-        Chart.defaults.borderColor = isLight ? '#dde3f0' : '#1e2840';
-        Chart.defaults.plugins.tooltip.backgroundColor = isLight ? '#ffffff' : '#1a2030';
-        Chart.defaults.plugins.tooltip.titleColor = isLight ? '#0f1728' : '#eef2ff';
-        Chart.defaults.plugins.tooltip.bodyColor = isLight ? '#4a5272' : '#8892b0';
-        Chart.defaults.plugins.tooltip.borderColor = isLight ? '#dde3f0' : '#1e2840';
-      }
-      // Re-render current page charts after theme change
-      const currentPage = GovSpirit.Store.getState().currentPage;
-      if (currentPage && currentPage !== 'input') {
-        setTimeout(() => GovSpirit.App.navigate(currentPage), 100);
-      }
-    });
-
-    // ─── Hide loading screen after app initializes ────────────────────────────
-
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const loading = document.getElementById('loading-screen');
-        if (loading) {
-          loading.style.opacity = '0';
-          setTimeout(() => loading.remove(), 500);
+    <script>
+      // Set the stored theme before the first paint so there is no flash of the
+      // wrong colour scheme. src/core/theme.js takes over from here.
+      (function () {
+        try {
+          var stored = localStorage.getItem('govspirit:theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (error) {
+          document.documentElement.setAttribute('data-theme', 'dark');
         }
-      }, 1200);
-    });
+      })();
+    </script>
+  </head>
 
-    // ─── Handle window resize — re-render charts ──────────────────────────────
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
 
-    const debouncedResize = (() => {
-      let timer;
-      return () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          GovSpirit.EventBus.emit(GovSpirit.Events.CHART_RESIZE);
-        }, 300);
-      };
-    })();
-    window.addEventListener('resize', debouncedResize);
+    <div class="boot-screen" id="boot-screen" role="status" aria-live="polite">
+      <svg class="boot-mark" width="44" height="44" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path
+          d="M3.5 13 16 4.5 28.5 13v13.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V13Z"
+          stroke="currentColor"
+          stroke-width="2.1"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M10.5 23v-3.5M16 23v-6"
+          stroke="currentColor"
+          stroke-width="2.1"
+          stroke-linecap="round"
+          opacity="0.55"
+        />
+        <path d="M21.5 23v-8.5" stroke="#c07a2c" stroke-width="2.4" stroke-linecap="round" />
+      </svg>
+      <p class="boot-title">GovSpirit</p>
+      <p class="boot-subtitle">Excise warehouse intelligence</p>
+      <div class="boot-track" aria-hidden="true"><div class="boot-indicator"></div></div>
+      <span class="visually-hidden">Loading</span>
+    </div>
 
-    // ─── Global error boundary ────────────────────────────────────────────────
+    <div id="app">
+      <aside id="sidebar"></aside>
+      <!-- Inert on wide screens. The drawer media query turns it into a scrim. -->
+      <div id="sidebar-scrim"></div>
 
-    window.addEventListener('error', (e) => {
-      console.error('[GovSpirit] Uncaught error:', e.error);
-      if (typeof GovSpirit?.App?.showToast === 'function') {
-        GovSpirit.App.showToast('An error occurred. Check console for details.', 'error');
-      }
-    });
+      <div id="main-wrapper">
+        <header id="topbar"></header>
+        <section id="filter-panel" aria-labelledby="filter-panel-title"></section>
+        <main id="main-content" tabindex="-1"></main>
+      </div>
+    </div>
 
-    console.log(`
-╔══════════════════════════════════════════════════════════════╗
-║           GovSpirit Warehouse Intelligence Platform          ║
-║                      Enterprise Edition                      ║
-╠══════════════════════════════════════════════════════════════╣
-║  Type GovSpirit in console to inspect the API               ║
-║  GovSpirit.Store.getState() → full application state        ║
-║  GovSpirit.App.navigate('executive') → navigate to page     ║
-║  GovSpirit.DemoData.generate() → generate fresh demo data   ║
-╚══════════════════════════════════════════════════════════════╝
-    `);
-  </script>
-</body>
+    <noscript>
+      <div style="padding: 2rem; max-width: 44rem; margin: 0 auto; font-family: system-ui">
+        <h1>JavaScript is required</h1>
+        <p>
+          GovSpirit does all of its work inside your browser: reading spreadsheets, computing figures and drawing
+          charts. There is no server to fall back on, so the application cannot run with JavaScript turned off.
+        </p>
+      </div>
+    </noscript>
+
+    <!-- ================================================================
+         Scripts load in dependency order. Classic scripts rather than ES
+         modules, so the page still works when opened straight from disk.
+         ================================================================ -->
+
+    <!-- Namespace and messaging -->
+    <script src="src/core/govspirit.js"></script>
+    <script src="src/core/eventBus.js"></script>
+
+    <!-- Pure helpers -->
+    <script src="src/lib/html.js"></script>
+    <script src="src/lib/format.js"></script>
+    <script src="src/lib/collections.js"></script>
+    <script src="src/lib/dom.js"></script>
+
+    <!-- Presentation primitives -->
+    <script src="src/ui/icons.js"></script>
+    <script src="src/core/store.js"></script>
+    <script src="src/core/theme.js"></script>
+    <script src="src/ui/charts.js"></script>
+    <script src="src/ui/components.js"></script>
+    <script src="src/ui/exporters.js"></script>
+
+    <!-- Domain data -->
+    <script src="src/data/referenceData.js"></script>
+    <script src="src/data/demoData.js"></script>
+
+    <!-- Ingestion -->
+    <script src="src/ingestion/fileReader.js"></script>
+    <script src="src/ingestion/smartMapper.js"></script>
+    <script src="src/ingestion/listParser.js"></script>
+    <script src="src/ingestion/dataValidator.js"></script>
+    <script src="src/ingestion/dataTransformer.js"></script>
+
+    <!-- Analytics -->
+    <script src="src/analytics/kpiEngine.js"></script>
+    <script src="src/analytics/classificationEngine.js"></script>
+    <script src="src/analytics/agingEngine.js"></script>
+    <script src="src/analytics/utilizationEngine.js"></script>
+    <script src="src/analytics/recommendationEngine.js"></script>
+    <script src="src/analytics/pipeline.js"></script>
+
+    <!-- Filters, routing and shell -->
+    <script src="src/filters/filterManager.js"></script>
+    <script src="src/core/router.js"></script>
+    <script src="src/ui/shell.js"></script>
+
+    <!-- Views -->
+    <script src="src/pages/import.js"></script>
+    <script src="src/pages/executive.js"></script>
+    <script src="src/pages/inventory.js"></script>
+    <script src="src/pages/warehouse.js"></script>
+    <script src="src/pages/dispatch.js"></script>
+    <script src="src/pages/hotels.js"></script>
+    <script src="src/pages/brandSupplier.js"></script>
+    <script src="src/pages/stockAging.js"></script>
+    <script src="src/pages/employees.js"></script>
+    <script src="src/pages/recommendations.js"></script>
+    <script src="src/pages/search.js"></script>
+
+    <!-- Bootstrap, last -->
+    <script src="src/main.js"></script>
+  </body>
 </html>

@@ -13,6 +13,7 @@ const browserGlobals = {
   console: 'readonly',
   navigator: 'readonly',
   location: 'readonly',
+  history: 'readonly',
   localStorage: 'readonly',
   sessionStorage: 'readonly',
   fetch: 'readonly',
@@ -92,7 +93,20 @@ export default [
     },
   },
   {
-    files: ['eslint.config.mjs'],
-    languageOptions: { sourceType: 'module' },
+    // Build and verification scripts run under Node, not in the browser.
+    files: ['eslint.config.mjs', 'scripts/**/*.mjs'],
+    languageOptions: {
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        URL: 'readonly',
+        __dirname: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+    },
   },
 ];

@@ -1,0 +1,812 @@
+/* ============================================================================
+   Components
+   Buttons, fields, tables, panels, metrics, status and states.
+   ========================================================================== */
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  white-space: nowrap;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    color var(--transition),
+    box-shadow var(--transition);
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:not(:disabled):hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: var(--surface-card);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.btn-secondary:not(:disabled):hover {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+}
+
+.btn-secondary.is-active {
+  border-color: var(--accent);
+  background: var(--accent-wash-strong);
+  color: var(--accent-ink);
+}
+
+.btn-subtle {
+  background: transparent;
+  color: var(--ink-soft);
+}
+
+.btn-subtle:not(:disabled):hover {
+  background: var(--surface-hover);
+  color: var(--ink-strong);
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--critical-ink) 45%, transparent);
+  color: var(--critical-ink);
+}
+
+.btn-danger:not(:disabled):hover {
+  background: var(--critical-wash);
+}
+
+/* Square icon-only control. Keeps a full tap area at every breakpoint. */
+.btn-icon {
+  width: var(--tap-target);
+  min-width: var(--tap-target);
+  height: var(--tap-target);
+  padding: 0;
+  border-radius: var(--radius-md);
+  color: var(--ink-soft);
+  position: relative;
+}
+
+.btn-icon:not(:disabled):hover {
+  background: var(--surface-hover);
+  color: var(--ink-strong);
+}
+
+.btn-icon.is-active {
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+
+.btn-icon .count-badge {
+  position: absolute;
+  top: 5px;
+  right: 4px;
+}
+
+/* Size modifiers reduce the visual box only. min-height keeps the tap area
+   compliant with WCAG 2.2 SC 2.5.8. */
+.btn-sm {
+  min-height: 34px;
+  padding-inline: var(--space-3);
+  font-size: var(--text-xs);
+}
+
+.btn-lg {
+  min-height: 48px;
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* ── Dropdown ───────────────────────────────────────────────────────────── */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: var(--z-dropdown);
+  min-width: 220px;
+  padding: var(--space-1);
+  background: var(--surface-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.dropdown-menu[hidden] {
+  display: none;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-align: left;
+}
+
+.dropdown-item .icon {
+  color: var(--ink-muted);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus-visible {
+  background: var(--surface-hover);
+  color: var(--ink-strong);
+}
+
+.dropdown-item:hover .icon {
+  color: var(--accent-ink);
+}
+
+/* ── Form controls ──────────────────────────────────────────────────────── */
+.control,
+.control-select,
+.control-textarea {
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-field);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink-strong);
+  font-size: var(--text-sm);
+  outline: none;
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.control-select {
+  cursor: pointer;
+  padding-right: var(--space-8);
+  /* Space for the native chevron so long option labels never sit under it. */
+}
+
+.control:focus-visible,
+.control-select:focus-visible,
+.control-textarea:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-wash);
+  outline: none;
+}
+
+.control-textarea {
+  resize: vertical;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Status pills ───────────────────────────────────────────────────────── */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.status-positive {
+  background: var(--positive-wash);
+  color: var(--positive-ink);
+}
+.status-caution {
+  background: var(--caution-wash);
+  color: var(--caution-ink);
+}
+.status-critical {
+  background: var(--critical-wash);
+  color: var(--critical-ink);
+}
+.status-info {
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+.status-neutral {
+  background: var(--neutral-wash);
+  color: var(--ink-muted);
+}
+
+/* ── Tables ───────────────────────────────────────────────────────────────
+   The scroller is focusable and labelled, because content reachable only by
+   scrolling must also be reachable by keyboard (WCAG 2.1.1).               */
+.table-scroll {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.table-scroll:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.data-table {
+  width: 100%;
+  min-width: max-content;
+  font-size: var(--text-xs);
+}
+
+.data-table th {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-sunken);
+  color: var(--ink-muted);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+}
+
+.data-table td,
+.data-table tbody th {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  vertical-align: middle;
+  font-weight: var(--weight-normal);
+  text-align: left;
+}
+
+.data-table tbody th {
+  color: var(--ink-strong);
+  font-weight: var(--weight-medium);
+}
+
+.data-table tbody tr:last-child td,
+.data-table tbody tr:last-child th {
+  border-bottom: none;
+}
+
+.data-table tbody tr:hover td,
+.data-table tbody tr:hover th {
+  background: var(--surface-sunken);
+}
+
+.data-table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.table-note {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--line);
+  font-size: var(--text-2xs);
+  color: var(--ink-muted);
+}
+
+/* On touch widths the first column stays pinned so a row remains identifiable
+   while the reader scrolls sideways through the figures. */
+@media (max-width: 767.98px) {
+  .data-table--pinned tbody th:first-child,
+  .data-table--pinned thead th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--surface-card);
+    box-shadow: 1px 0 0 var(--line);
+  }
+
+  .data-table--pinned thead th:first-child {
+    z-index: 3;
+    background: var(--surface-sunken);
+  }
+
+  .data-table--pinned tbody tr:hover th:first-child {
+    background: var(--surface-sunken);
+  }
+
+  .data-table th,
+  .data-table td,
+  .data-table tbody th {
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* ── Panels ─────────────────────────────────────────────────────────────── */
+.panel {
+  background: var(--surface-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--ink-strong);
+}
+
+.panel-subtitle {
+  margin-top: 2px;
+  font-size: var(--text-2xs);
+  color: var(--ink-muted);
+  max-width: var(--measure);
+}
+
+.panel-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.panel-body {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+/* Chart height scales with the viewport so a chart is neither 40% of a phone
+   screen nor a letterbox on a large monitor. */
+.panel-chart {
+  position: relative;
+  padding: var(--space-4);
+  height: var(--chart-height, clamp(210px, 30vw, 290px));
+}
+
+.panel-chart > canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.panel--tall {
+  --chart-height: clamp(250px, 38vw, 350px);
+}
+
+/* ── Grids ──────────────────────────────────────────────────────────────── */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 232px), 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.panel-grid-2,
+.panel-grid-3 {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.panel-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+}
+
+.panel-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr));
+}
+
+/* ── Metric card ──────────────────────────────────────────────────────────
+   A flat card with one hairline accent. No lift on hover: these are read, not
+   clicked, and a card that rises under the cursor implies an action.       */
+.metric-card {
+  position: relative;
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  background: var(--surface-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.metric-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  color: var(--metric-accent, var(--ink-muted));
+}
+
+.metric-label {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-muted);
+}
+
+.metric-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  color: var(--ink-strong);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.metric-note {
+  margin-top: var(--space-1);
+  font-size: var(--text-2xs);
+  color: var(--ink-muted);
+  line-height: var(--leading-snug);
+}
+
+.metric-spark {
+  height: 34px;
+  margin-top: var(--space-3);
+}
+
+/* ── Page header ────────────────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+
+.page-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.022em;
+  color: var(--ink-strong);
+}
+
+.page-subtitle {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  max-width: var(--measure);
+}
+
+.page-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.section-heading {
+  margin: var(--space-8) 0 var(--space-4);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--ink-muted);
+}
+
+/* ── States ─────────────────────────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+}
+
+.empty-state .icon {
+  color: var(--ink-muted);
+  opacity: 0.75;
+}
+
+.empty-title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--ink);
+}
+
+.empty-body {
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  max-width: 48ch;
+  line-height: var(--leading-normal);
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  text-align: center;
+  background: var(--critical-wash);
+  border: 1px solid color-mix(in srgb, var(--critical-ink) 30%, transparent);
+  border-radius: var(--radius-lg);
+}
+
+.error-state .icon {
+  color: var(--critical-ink);
+}
+
+.error-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--critical-ink);
+}
+
+.error-body {
+  font-size: var(--text-sm);
+  color: var(--ink);
+  max-width: 54ch;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  background: var(--surface-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 2px solid var(--line-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+
+/* ── Progress ───────────────────────────────────────────────────────────── */
+.progress-track {
+  height: 5px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--surface-raised);
+}
+
+.progress-value {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  transition: width var(--duration-slow) var(--ease-out);
+}
+
+/* ── Notice ─────────────────────────────────────────────────────────────── */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface-card);
+}
+
+.notice .icon {
+  color: var(--ink-muted);
+  margin-top: 1px;
+}
+
+.notice-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--ink-strong);
+}
+
+.notice-body {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
+  line-height: var(--leading-normal);
+  max-width: var(--measure);
+}
+
+.notice-info {
+  background: var(--accent-wash);
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.notice-info .icon {
+  color: var(--accent-ink);
+}
+
+.notice-caution {
+  background: var(--caution-wash);
+  border-color: color-mix(in srgb, var(--caution-ink) 30%, transparent);
+}
+.notice-caution .icon {
+  color: var(--caution-ink);
+}
+
+.notice-positive {
+  background: var(--positive-wash);
+  border-color: color-mix(in srgb, var(--positive-ink) 30%, transparent);
+}
+.notice-positive .icon {
+  color: var(--positive-ink);
+}
+
+/* ── Sub-section heading ──────────────────────────────────────────────────
+   A titled block inside a page, one level below the page header.          */
+.section-intro {
+  margin-bottom: var(--space-4);
+}
+
+.section-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--ink-strong);
+}
+
+.section-subtitle {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+  max-width: var(--measure);
+}
+
+/* ── Zone tag ─────────────────────────────────────────────────────────────
+   Colour comes from the zone definition, so it is set inline. The tag also
+   carries the zone letter as text: colour alone must never be the only way a
+   value is conveyed (WCAG 1.4.1 Use of Colour).                            */
+.zone-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.zone-tag-swatch {
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+/* ── Finding rows ───────────────────────────────────────────────────────── */
+.finding-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.finding {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--line-strong);
+  background: var(--surface-sunken);
+}
+
+.finding-title {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--ink-strong);
+}
+
+.finding-body {
+  margin-top: 2px;
+  font-size: var(--text-2xs);
+  color: var(--ink-soft);
+  line-height: var(--leading-normal);
+}
+
+.finding-caution {
+  border-left-color: var(--caution-ink);
+  background: var(--caution-wash);
+}
+.finding-caution .icon {
+  color: var(--caution-ink);
+}
+.finding-critical {
+  border-left-color: var(--critical-ink);
+  background: var(--critical-wash);
+}
+.finding-critical .icon {
+  color: var(--critical-ink);
+}
+.finding-positive {
+  border-left-color: var(--positive-ink);
+  background: var(--positive-wash);
+}
+.finding-positive .icon {
+  color: var(--positive-ink);
+}
+.finding-info {
+  border-left-color: var(--accent-ink);
+  background: var(--accent-wash);
+}
+.finding-info .icon {
+  color: var(--accent-ink);
+}
+
+/* ── Utilities ──────────────────────────────────────────────────────────── */
+.stack-sm > * + * {
+  margin-top: var(--space-2);
+}
+.stack-md > * + * {
+  margin-top: var(--space-4);
+}
+.mt-2 {
+  margin-top: var(--space-4);
+}
+.mt-3 {
+  margin-top: var(--space-6);
+}
+.mb-3 {
+  margin-bottom: var(--space-6);
+}
+.text-muted {
+  color: var(--ink-muted);
+}
+.text-right {
+  text-align: right;
+}
+.full-width {
+  width: 100%;
+}
+
+mark {
+  padding: 0 2px;
+  border-radius: 2px;
+  background: var(--caution-wash);
+  color: var(--caution-ink);
+  font-weight: var(--weight-semibold);
+}

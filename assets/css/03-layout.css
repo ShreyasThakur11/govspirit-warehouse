@@ -1,0 +1,767 @@
+/* ============================================================================
+   Application shell
+   ----------------------------------------------------------------------------
+   Layout strategy
+
+   1024px and above  Two column grid. The sidebar is a permanent rail that can
+                     be collapsed to icons when the operator wants the width.
+   Below 1024px      Single column. The sidebar becomes an off canvas drawer
+                     with a scrim, a focus trap and Escape to close. This covers
+                     every phone and iPad in portrait, where a fixed 248px rail
+                     would consume a third of the screen.
+
+   Heights use dvh so collapsing mobile browser chrome cannot clip the last row
+   of content, with a vh fallback for older Safari.
+   ========================================================================== */
+
+/* ── Boot screen ────────────────────────────────────────────────────────── */
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loader);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--gutter);
+  background: var(--surface-page);
+  text-align: center;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+.boot-screen[hidden] {
+  display: none;
+}
+
+.boot-screen.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boot-mark {
+  color: var(--accent-ink);
+}
+
+.boot-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+  color: var(--ink-strong);
+}
+
+.boot-subtitle {
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.boot-track {
+  width: min(200px, 56vw);
+  height: 3px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--surface-raised);
+}
+
+.boot-indicator {
+  width: 38%;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  animation: bootSlide 1.15s var(--ease-in-out) infinite;
+}
+
+@keyframes bootSlide {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(330%);
+  }
+}
+
+/* ── Grid ───────────────────────────────────────────────────────────────── */
+#app {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  transition: grid-template-columns var(--transition);
+}
+
+#app.is-rail {
+  grid-template-columns: var(--sidebar-rail) minmax(0, 1fr);
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────────────── */
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface-chrome);
+  border-right: 1px solid var(--line);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--topbar-height);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.brand-text {
+  min-width: 0;
+}
+
+.brand-name {
+  display: block;
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+  line-height: var(--leading-tight);
+  color: var(--ink-strong);
+  white-space: nowrap;
+}
+
+.brand-tagline {
+  display: block;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.sidebar-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-3) var(--space-2) var(--space-4);
+}
+
+.nav-section {
+  padding: var(--space-4) var(--space-3) var(--space-2);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--ink-muted);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: 1px;
+  border-radius: var(--radius-md);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-align: left;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+.nav-item:hover {
+  background: var(--surface-hover);
+  color: var(--ink-strong);
+  text-decoration: none;
+}
+
+/* The active item is marked by a solid rule against the sidebar edge. A tinted
+   pill alone is easy to lose at a glance on a dense list. */
+.nav-item[aria-current='page'] {
+  position: relative;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font-weight: var(--weight-semibold);
+}
+
+.nav-item[aria-current='page']::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-2) * -1);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+  background: var(--accent);
+}
+
+.nav-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-item[aria-disabled='true'] {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.nav-item[aria-disabled='true']:hover {
+  background: transparent;
+  color: var(--ink-soft);
+}
+
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  padding: var(--space-3) var(--space-4);
+  padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  font-size: var(--text-2xs);
+  color: var(--ink-muted);
+}
+
+/* A standalone link needs its own target area rather than relying on the
+   inline link exception in WCAG 2.2 SC 2.5.8. */
+.sidebar-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 24px;
+  padding-inline: var(--space-2);
+  margin-inline: calc(var(--space-2) * -1);
+  border-radius: var(--radius-sm);
+  color: var(--ink-muted);
+}
+
+.sidebar-footer a:hover {
+  color: var(--accent-ink);
+}
+
+/* Collapsed rail, desktop only. */
+#app.is-rail .nav-label,
+#app.is-rail .brand-text,
+#app.is-rail .nav-section,
+#app.is-rail .sidebar-footer {
+  display: none;
+}
+
+#app.is-rail .nav-item {
+  justify-content: center;
+  gap: 0;
+  padding-inline: var(--space-2);
+}
+
+#app.is-rail .sidebar-brand {
+  justify-content: center;
+  padding-inline: var(--space-2);
+}
+
+/* ── Drawer scrim ─────────────────────────────────────────────────────────
+   A plain scrim. Blurring the background costs a full-screen compositing pass
+   on every frame of the drawer animation, which is exactly the wrong trade on
+   the low-end Android tablets this is likely to run on.                     */
+#sidebar-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-scrim);
+  background: var(--scrim);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+/* ── Main column ────────────────────────────────────────────────────────── */
+#main-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--surface-page);
+}
+
+/* ── Topbar ─────────────────────────────────────────────────────────────── */
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  height: var(--topbar-height);
+  flex-shrink: 0;
+  padding-inline: var(--gutter);
+  background: var(--surface-chrome);
+  border-bottom: 1px solid var(--line);
+  z-index: var(--z-topbar);
+}
+
+.topbar-start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.topbar-end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+/* Compact brand, shown only while the sidebar is off canvas. */
+.topbar-brand {
+  display: none;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.topbar-brand-name {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+  color: var(--ink-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 36px;
+  width: clamp(190px, 26vw, 330px);
+  padding-inline: var(--space-3);
+  background: var(--surface-field);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  color: var(--ink-muted);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.topbar-search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-wash);
+}
+
+.topbar-search input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: var(--text-sm);
+  color: var(--ink-strong);
+}
+
+.topbar-search input::placeholder {
+  color: var(--ink-muted);
+}
+
+.data-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--positive-ink) 32%, transparent);
+  border-radius: var(--radius-pill);
+  background: var(--positive-wash);
+  color: var(--positive-ink);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.data-pill-dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ── Filter panel ───────────────────────────────────────────────────────── */
+#filter-panel {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-rows: 0fr;
+  background: var(--surface-chrome);
+  border-bottom: 1px solid var(--line);
+  transition: grid-template-rows var(--duration-slow) var(--ease-out);
+}
+
+#filter-panel.is-open {
+  grid-template-rows: 1fr;
+}
+
+.filter-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.filter-body {
+  padding: var(--space-4) var(--gutter) var(--space-5);
+  max-height: min(52vh, 400px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.filter-heading {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--ink);
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4) var(--space-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.field-label {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-muted);
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  max-width: 100%;
+  padding: 3px 3px 3px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-medium);
+}
+
+.chip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: inherit;
+}
+
+.chip-remove:hover {
+  background: var(--accent-wash-strong);
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding-inline: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Main content ───────────────────────────────────────────────────────── */
+#main-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.page-content {
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: var(--space-6) var(--gutter);
+  padding-bottom: calc(var(--space-12) + env(safe-area-inset-bottom));
+}
+
+/* ── Toasts ─────────────────────────────────────────────────────────────── */
+#toast-region {
+  position: fixed;
+  z-index: var(--z-toast);
+  right: var(--gutter);
+  bottom: calc(var(--gutter) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;
+  max-width: min(400px, calc(100vw - 2 * var(--gutter)));
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity var(--transition),
+    transform var(--transition);
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.toast-success {
+  border-left-color: var(--positive-ink);
+}
+.toast-success .icon {
+  color: var(--positive-ink);
+}
+.toast-warning {
+  border-left-color: var(--caution-ink);
+}
+.toast-warning .icon {
+  color: var(--caution-ink);
+}
+.toast-error {
+  border-left-color: var(--critical-ink);
+}
+.toast-error .icon {
+  color: var(--critical-ink);
+}
+.toast-info {
+  border-left-color: var(--accent-ink);
+}
+.toast-info .icon {
+  color: var(--accent-ink);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Wide desktop
+   ══════════════════════════════════════════════════════════════════════ */
+@media (min-width: 1600px) {
+  :root {
+    --sidebar-width: 268px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Below 1024px: the sidebar becomes a drawer.
+   Phones, iPad portrait (768, 820, 834) and laptops in split view.
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1023.98px) {
+  #app,
+  #app.is-rail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #sidebar {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: var(--z-sidebar);
+    width: min(304px, 86vw);
+    box-shadow: var(--shadow-xl);
+    transform: translateX(-102%);
+    visibility: hidden;
+    transition:
+      transform var(--duration-slow) var(--ease-out),
+      visibility var(--duration-slow);
+  }
+
+  body.nav-open #sidebar {
+    transform: none;
+    visibility: visible;
+  }
+
+  /* Rail styling must never leak into the drawer. */
+  #app.is-rail .nav-label,
+  #app.is-rail .brand-text,
+  #app.is-rail .nav-section {
+    display: revert;
+  }
+
+  #app.is-rail .sidebar-footer {
+    display: flex;
+  }
+
+  #app.is-rail .nav-item {
+    justify-content: flex-start;
+    gap: var(--space-3);
+    padding-inline: var(--space-3);
+  }
+
+  #app.is-rail .sidebar-brand {
+    justify-content: flex-start;
+    padding-inline: var(--space-4);
+  }
+
+  #sidebar-scrim {
+    display: block;
+    pointer-events: none;
+  }
+
+  body.nav-open #sidebar-scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.nav-open {
+    overflow: hidden;
+  }
+
+  .topbar-brand {
+    display: flex;
+  }
+
+  /* Slightly larger hit areas once the pointer is a thumb. */
+  .nav-item {
+    min-height: 48px;
+    font-size: var(--text-md);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Below 900px: drop the inline search and rely on the search page.
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 899.98px) {
+  .topbar-search {
+    display: none;
+  }
+
+  .data-pill .pill-text {
+    display: none;
+  }
+
+  .data-pill {
+    padding-inline: var(--space-2);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Below 640px: phones.
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 639.98px) {
+  :root {
+    --topbar-height: 54px;
+    --tap-target: 42px;
+  }
+
+  #topbar {
+    gap: var(--space-2);
+  }
+
+  .data-pill {
+    display: none;
+  }
+
+  #toast-region {
+    left: var(--gutter);
+    right: var(--gutter);
+    max-width: none;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-body {
+    max-height: 62vh;
+  }
+
+  .page-content {
+    padding-top: var(--space-5);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Below 400px: iPhone SE, folded devices.
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 399.98px) {
+  :root {
+    --tap-target: 40px;
+  }
+
+  .topbar-brand-name {
+    display: none;
+  }
+
+  #sidebar {
+    width: 92vw;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Short landscape phones: reclaim vertical space.
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-height: 520px) and (orientation: landscape) {
+  :root {
+    --topbar-height: 46px;
+  }
+
+  .sidebar-brand {
+    min-height: 46px;
+    padding-block: var(--space-2);
+  }
+
+  .nav-item {
+    min-height: 38px;
+  }
+}
