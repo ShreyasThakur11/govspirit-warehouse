@@ -42,6 +42,9 @@ jobs:
       - name: Verify every class in the markup is styled
         run: npm run check:classes
 
+      - name: Verify every referenced file is committed and correctly cased
+        run: npm run check:shipped
+
   smoke:
     name: Load the application in a real browser
     runs-on: ubuntu-latest

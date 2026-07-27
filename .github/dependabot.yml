@@ -18,12 +18,18 @@ updates:
     labels:
       - dependencies
     groups:
+      # eslint and @eslint/js share a major version line. Bumped separately,
+      # the second pull request always fails npm ci on a peer conflict.
+      eslint:
+        patterns:
+          - 'eslint'
+          - '@eslint/*'
       dev-tooling:
         patterns:
           - '*'
-        update-types:
-          - minor
-          - patch
+        exclude-patterns:
+          - 'eslint'
+          - '@eslint/*'
 
   - package-ecosystem: github-actions
     directory: /

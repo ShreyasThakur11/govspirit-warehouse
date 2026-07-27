@@ -34,7 +34,8 @@
     "format:check": "prettier --check .",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:classes": "node scripts/check-classes.mjs",
-    "check": "npm run lint && npm run format:check && npm run check:contrast && npm run check:classes"
+    "check": "npm run lint && npm run format:check && npm run check:contrast && npm run check:classes && npm run check:shipped",
+    "check:shipped": "node scripts/check-shipped.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",

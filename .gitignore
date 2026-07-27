@@ -56,11 +56,15 @@ desktop.ini
 # ─── Local warehouse data ────────────────────────────────────────
 # Never commit real warehouse exports. This app is client-side only
 # and no data should ever leave the operator's machine.
+#
+# The leading slash matters. Written as `data/` these patterns match at any
+# depth, which silently excluded src/data/ and shipped a build missing the
+# reference dataset and the demo generator.
 *.xlsx
 *.xls
 !docs/**/*.xlsx
-data/
-uploads/
+/data/
+/uploads/
 
 # The deck builder pulls pptxgenjs in on demand and does not save it
 docs/presentation/*.pdf
