@@ -64,4 +64,4 @@ shell would add a distribution problem without adding capability.
 ## Contributions
 
 If you want to work on something here, open an issue first so effort is not
-duplicated. See [CONTRIBUTING.md](CONTRIBUTING.md).
+duplicated. See [CONTRIBUTING.md](../.github/CONTRIBUTING.md).

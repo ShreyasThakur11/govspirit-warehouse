@@ -5,7 +5,7 @@
  * `Math.random()` and rendered it as if it were measured warehouse activity.
  * It has been removed rather than restyled: presenting random numbers as
  * operational data in a decision-support tool is a defect, not a feature.
- * If hourly analysis is wanted, it needs timestamped picks. See ROADMAP.md.
+ * If hourly analysis is wanted, it needs timestamped picks. See docs/roadmap.md.
  */
 (function initUtilizationEngine(GovSpirit) {
   'use strict';

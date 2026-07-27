@@ -4,7 +4,7 @@ Thanks for looking. Bug reports, corrections and pull requests are all welcome.
 
 ## Before you start
 
-Read [docs/architecture.md](docs/architecture.md). Two constraints shape
+Read [docs/architecture.md](../docs/architecture.md). Two constraints shape
 everything and are not open to change without discussion:
 
 1. **Nothing leaves the browser.** No backend, no telemetry, no upload. The
@@ -24,7 +24,7 @@ npm run check    # lint, format, contrast, stylesheet coverage
 
 - One concern per pull request
 - `npm run check` passes
-- New or changed metrics are documented in [docs/metrics.md](docs/metrics.md)
+- New or changed metrics are documented in [docs/metrics.md](../docs/metrics.md)
 - New classes exist in `assets/css`, which `npm run check:classes` enforces
 - New colours carry a measured contrast ratio, which `npm run check:contrast`
   enforces
@@ -58,7 +58,7 @@ one rule with no exceptions.
 template. `raw()` needs a comment explaining why it is safe.
 
 **Emoji as iconography.** Add a path to `src/ui/icons.js` instead. The
-reasoning is in [docs/design-system.md](docs/design-system.md).
+reasoning is in [docs/design-system.md](../docs/design-system.md).
 
 **Colour as the only signal.** Every status needs a word as well as a hue.
 
@@ -71,7 +71,7 @@ Open an issue with:
 
 - What you did, what happened, what you expected
 - Browser and version
-- Whether it reproduces with **Demo data**, which is seeded and therefore
+- Whether it reproduces with the **sample depot**, which is seeded and therefore
   identical for everyone
 - Any console output
 
@@ -87,4 +87,4 @@ Do not open a public issue for a vulnerability. See [SECURITY.md](SECURITY.md).
 
 ## Licence
 
-Contributions are accepted under the [MIT Licence](LICENSE).
+Contributions are accepted under the [MIT Licence](../LICENSE).

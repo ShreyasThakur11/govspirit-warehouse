@@ -187,7 +187,7 @@ GovSpirit.DemoData.generate({ seed: 42 });
 ## Testing
 
 There are no unit tests yet. This is a known gap, recorded in
-[ROADMAP.md](../ROADMAP.md).
+[the roadmap](roadmap.md).
 
 `src/lib/` was separated from `src/ui/` specifically so that they can be added
 without a DOM: everything in `lib/` is a pure function of its arguments. That
@@ -195,7 +195,7 @@ is the sensible place to start.
 
 Manual checks currently used for a release:
 
-1. Load the demo dataset, walk all eleven views, confirm no console errors
+1. Open the sample depot, walk all eleven views, confirm no console errors
 2. Repeat at 320, 375, 768, 1024 and 1280 pixels wide
 3. Toggle the theme on a chart-heavy view and confirm the charts follow
 4. Tab through the import page from the skip link to the end

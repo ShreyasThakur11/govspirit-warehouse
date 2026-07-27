@@ -141,7 +141,7 @@ Stated plainly rather than omitted.
 - **Not yet tested with a screen reader in anger.** The semantics are correct by
   inspection, but NVDA, JAWS and VoiceOver each behave differently and no
   substitute exists for running them.
-- **No automated axe or Lighthouse run in CI.** Planned, see [ROADMAP](../ROADMAP.md).
+- **No automated axe or Lighthouse run in CI.** Planned, see [the roadmap](roadmap.md).
 - **Charts are canvas.** The accessible name summarises the leading values, but
   a reader cannot explore a canvas point by point. Every chart is backed by a
   table or an export containing the same figures.

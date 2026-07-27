@@ -194,7 +194,7 @@ structure. A 320px screen is a supported target and is checked on every view.
 - **No tests yet.** The verification that exists is real (lint, formatting,
   contrast, stylesheet coverage) but it is not unit tests. `lib/` was separated
   from `ui/` precisely so that adding them is straightforward. See
-  [ROADMAP](../ROADMAP.md).
+  [the roadmap](roadmap.md).
 - **Client-side memory bound.** Files above 60 MB are refused, and sheets are
   capped at 200,000 rows, because past that the tab becomes unusable and a
   refusal is better than a hang.
