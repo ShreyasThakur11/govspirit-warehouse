@@ -101,6 +101,12 @@ try {
 
   /* ── Demo dataset ─────────────────────────────────────────────────────── */
 
+  // The demo button lives inside a hidden tab panel, so select the tab first.
+  // This exercises the tab pattern as a side effect.
+  await page.click('#tab-demo');
+  await page.waitForSelector('#panel-demo:not([hidden])', { timeout: 5000 });
+  pass('demo tab opens its panel');
+
   await page.click('#btn-demo');
   await page.waitForFunction(() => window.GovSpirit.Store.getState().isDataLoaded, {
     timeout: 20000,
