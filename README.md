@@ -1,3 +1,5 @@
+<div align="center">
+
 # GovSpirit
 
 Warehouse analytics for state excise depots. Open a stock spreadsheet, get KPIs, a storage plan and a ranked list of things to fix.
@@ -10,7 +12,7 @@ Everything runs in the browser. No upload, no server, no account.
 [![WCAG 2.2 AA](https://img.shields.io/badge/WCAG%202.2-AA-0f6f62)](docs/accessibility.md)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
----
+</div>
 
 ## Try it
 
