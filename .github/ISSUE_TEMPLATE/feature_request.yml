@@ -1,0 +1,53 @@
+name: Feature request
+description: Suggest a capability
+title: 'feat: '
+labels: [enhancement]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please read [ROADMAP.md](../../blob/main/ROADMAP.md) first. Some ideas
+        have already been considered and rejected for stated reasons, and two
+        constraints are fixed: no backend, and no build step.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: >
+        What can you not do today? Describe the situation in the depot, not the
+        feature you have in mind.
+      placeholder: >
+        I cannot tell whether stock is worse this month than last, because
+        every figure is a snapshot of the file I just uploaded.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like it to do
+    validations:
+      required: true
+
+  - type: textarea
+    id: data
+    attributes:
+      label: What data would it need
+      description: >
+        Which columns, from which export. Many good ideas are blocked only
+        because the required field is not in any file a depot currently
+        produces.
+
+  - type: dropdown
+    id: constraints
+    attributes:
+      label: Does this fit within the constraints?
+      description: No backend, no telemetry, no build step, works offline.
+      options:
+        - Yes, it can run entirely in the browser
+        - I am not sure
+        - No, it would need a server
+    validations:
+      required: true

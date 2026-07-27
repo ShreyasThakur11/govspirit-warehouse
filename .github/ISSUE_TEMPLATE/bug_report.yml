@@ -1,0 +1,75 @@
+name: Bug report
+description: Something behaves incorrectly
+title: 'fix: '
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not attach a real stock export. If the problem depends on the
+        shape of your file, describe the column headings and the row count.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you saw, and what you expected instead.
+      placeholder: |
+        1. Loaded the demo dataset
+        2. Opened the Warehouse map
+        3. Zone E showed 0% utilisation, but the table below it lists 340 bottles
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reproduces-with-demo
+    attributes:
+      label: Does it reproduce with the demo dataset?
+      description: >
+        The demo generator is seeded, so it produces identical numbers on every
+        machine. A reproduction against it is worth far more than a description.
+      options:
+        - Yes, it reproduces with Demo data
+        - No, only with my own file
+        - I have not tried
+    validations:
+      required: true
+
+  - type: input
+    id: view
+    attributes:
+      label: Which view
+      placeholder: Executive summary, Warehouse map, Import, and so on
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 131 on Windows 11, Safari 17.4 on iPadOS
+    validations:
+      required: true
+
+  - type: input
+    id: viewport
+    attributes:
+      label: Screen width
+      description: Helpful for layout problems.
+      placeholder: 1440px desktop, 390px iPhone, 820px iPad portrait
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output
+      description: Anything red in the browser console. Paste it as it appears.
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I have not attached real warehouse data
+          required: true
+        - label: I searched existing issues
+          required: true

@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/ShreyasThakur11/govspirit-warehouse/security/advisories/new
+    about: Report privately. Please do not open a public issue.
+
+  - name: Documentation
+    url: https://github.com/ShreyasThakur11/govspirit-warehouse/tree/main/docs
+    about: Architecture, data model, metric formulas and accessibility notes.
+
+  - name: How a metric is calculated
+    url: https://github.com/ShreyasThakur11/govspirit-warehouse/blob/main/docs/metrics.md
+    about: Every figure, its formula, and what it does without the source data.

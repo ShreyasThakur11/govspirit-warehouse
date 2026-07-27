@@ -1,0 +1,39 @@
+version: 2
+
+updates:
+  # Development tooling only. The application itself has no npm dependencies
+  # at runtime; its two CDN libraries are pinned with integrity digests and
+  # are bumped by hand so the digest can be regenerated at the same time.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+      day: monday
+      time: '06:00'
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    labels:
+      - dependencies
+    groups:
+      dev-tooling:
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+      day: monday
+      time: '06:00'
+      timezone: Asia/Kolkata
+    commit-message:
+      prefix: ci
+    labels:
+      - dependencies
+      - ci

@@ -93,7 +93,7 @@ export default [
     },
   },
   {
-    // Build and verification scripts run under Node, not in the browser.
+    // Verification scripts run under Node, not in the browser.
     files: ['eslint.config.mjs', 'scripts/**/*.mjs'],
     languageOptions: {
       sourceType: 'module',
@@ -107,6 +107,15 @@ export default [
     },
     rules: {
       'no-console': 'off',
+    },
+  },
+  {
+    // The smoke test straddles both worlds: the file runs in Node, but every
+    // page.evaluate() callback is serialised and executed inside the page, so
+    // browser globals inside it are correct rather than a mistake.
+    files: ['scripts/smoke-test.mjs'],
+    languageOptions: {
+      globals: browserGlobals,
     },
   },
 ];

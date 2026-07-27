@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, format and verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Verify colour contrast against WCAG 2.2 AA
+        run: npm run check:contrast
+
+      - name: Verify every class in the markup is styled
+        run: npm run check:classes
+
+  smoke:
+    name: Load the application in a real browser
+    runs-on: ubuntu-latest
+    needs: verify
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # Loads index.html in headless Chromium, generates the demo dataset,
+      # walks every view and fails on any console error or unhandled rejection.
+      # Static analysis cannot catch a script-order mistake; this can.
+      - name: Install Puppeteer
+        run: npm install --no-save puppeteer@23
+
+      - name: Serve and smoke test
+        run: |
+          npx --yes http-server . -p 4173 -s &
+          npx --yes wait-on http://127.0.0.1:4173 --timeout 30000
+          node scripts/smoke-test.mjs
