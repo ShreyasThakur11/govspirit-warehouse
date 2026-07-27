@@ -38,8 +38,8 @@
     "check:shipped": "node scripts/check-shipped.mjs"
   },
   "devDependencies": {
-    "@eslint/js": "^9.18.0",
-    "eslint": "^9.18.0",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
     "prettier": "^3.4.2"
   },
   "engines": {
