@@ -212,6 +212,11 @@
   function focusRegion(element) {
     if (!element) return;
     if (!element.hasAttribute('tabindex')) element.setAttribute('tabindex', '-1');
+    // Chromium treats a programmatic focus() as focus-visible, so without this
+    // marker every route change leaves a focus ring drawn around the page
+    // heading for readers who never touched the keyboard. The stylesheet uses
+    // it to suppress the ring here and nowhere else.
+    element.setAttribute('data-focus-region', '');
     element.focus({ preventScroll: true });
   }
 

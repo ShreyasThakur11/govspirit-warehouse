@@ -145,6 +145,15 @@ th.numeric {
   outline: none;
 }
 
+/* A region the router focused so a screen reader announces the new view. It is
+   not in the tab order, so a ring here would mark a move the reader never
+   made. Chromium counts programmatic focus as focus-visible, which is why the
+   plain :focus-visible rule above is not enough. */
+[data-focus-region]:focus,
+[data-focus-region]:focus-visible {
+  outline: none;
+}
+
 /* ── Skip link ──────────────────────────────────────────────────────────── */
 .skip-link {
   position: absolute;
