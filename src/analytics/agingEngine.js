@@ -6,11 +6,17 @@
 
   const { Collections, Store } = GovSpirit.require('Collections', 'Store');
 
+  /**
+   * `token` names the CSS custom property the bucket should be drawn in. The
+   * engine deliberately does not resolve it: Chart.js writes straight to a
+   * canvas fill, which cannot evaluate `var()`, so the view resolves the token
+   * at draw time through Theme.cssVar instead.
+   */
   const BUCKETS = Object.freeze([
-    { range: '0–30', min: 0, max: 30, tone: '#10b981' },
-    { range: '31–60', min: 31, max: 60, tone: '#3b82f6' },
-    { range: '61–90', min: 61, max: 90, tone: '#f59e0b' },
-    { range: '90+', min: 91, max: Infinity, tone: '#f43f5e' },
+    { range: '0 to 30', min: 0, max: 30, token: '--positive-fill' },
+    { range: '31 to 60', min: 31, max: 60, token: '--series-3' },
+    { range: '61 to 90', min: 61, max: 90, token: '--caution-fill' },
+    { range: '90+', min: 91, max: Infinity, token: '--critical-fill' },
   ]);
 
   const DEAD_DAYS = 90;
@@ -27,7 +33,7 @@
       );
       return {
         range: bucket.range,
-        tone: bucket.tone,
+        token: bucket.token,
         count: items.length,
         qty: Collections.sumBy(items, 'quantity_bottles'),
         value: Collections.sumBy(items, 'total_value'),

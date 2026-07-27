@@ -4,12 +4,13 @@
 (function initStockAgingPage(GovSpirit) {
   'use strict';
 
-  const { Html, Format, Store, Components, Charts, Exporters } = GovSpirit.require(
+  const { Html, Format, Store, Components, Charts, Theme, Exporters } = GovSpirit.require(
     'Html',
     'Format',
     'Store',
     'Components',
     'Charts',
+    'Theme',
     'Exporters'
   );
 
@@ -190,7 +191,7 @@
               {
                 label: 'Inventory lines',
                 data: buckets.map((b) => b.count),
-                backgroundColor: buckets.map((b) => Charts.alpha(b.tone, 0.85)),
+                backgroundColor: buckets.map((b) => Charts.alpha(Theme.cssVar(b.token), 0.85)),
                 borderRadius: 5,
               },
             ],

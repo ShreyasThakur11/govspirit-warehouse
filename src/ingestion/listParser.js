@@ -133,6 +133,7 @@
   const QUANTITY_PATTERNS = [
     /(?:qty|quantity|nos?|units?|bottles?|pcs?|pieces?|cases?)\s*[:\-=]?\s*(\d{1,6})/i,
     /(\d{1,6})\s*(?:qty|quantity|nos?|units?|bottles?|pcs?|pieces?|cases?)\b/i,
+    // The en dash is intentional: operators paste it as a separator.
     /[-–:]\s*(\d{1,6})(?!\s*(?:ml|l)\b)/i,
     /[×x]\s*(\d{1,6})\b/i,
   ];

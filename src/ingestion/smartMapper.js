@@ -397,7 +397,7 @@
 
   /**
    * Score a header against one field's variants.
-   * @returns {number} 0–1
+   * @returns {number} 0 to 1
    */
   function scoreMatch(header, fieldId) {
     const h = normalise(header);

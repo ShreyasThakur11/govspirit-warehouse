@@ -95,7 +95,7 @@
             'the loading dock.',
           impact:
             'Moving high-frequency picks close to the dispatch bay is the single highest-return ' +
-            'slotting change available. Warehouses typically recover 15–30% of picker walking ' +
+            'slotting change available. Warehouses typically recover 15 to 30% of picker walking ' +
             'time from this alone.',
           action:
             `1. Confirm Zone A has free bins near the dock.\n` +

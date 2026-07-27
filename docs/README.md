@@ -6,19 +6,19 @@ Start here.
 
 If you are **new to the project**, read in this order:
 
-1. [Architecture](architecture.md) — what the pieces are and how data moves between them
-2. [Data model](data-model.md) — what a record looks like once it is inside
-3. [Metrics](metrics.md) — how each number on screen is produced
+1. [Architecture](architecture.md): what the pieces are and how data moves between them
+2. [Data model](data-model.md): what a record looks like once it is inside
+3. [Metrics](metrics.md): how each number on screen is produced
 
 If you are **changing the code**:
 
-4. [Development](development.md) — setup, conventions, how to add a page or a metric
-5. [Design system](design-system.md) — tokens and component vocabulary
-6. [Accessibility](accessibility.md) — the standard the interface is held to
+4. [Development](development.md): setup, conventions, how to add a page or a metric
+5. [Design system](design-system.md): tokens and component vocabulary
+6. [Accessibility](accessibility.md): the standard the interface is held to
 
 If you are **deploying it**:
 
-7. [Deployment](deployment.md) — GitHub Pages, self-hosting, air-gapped installs
+7. [Deployment](deployment.md): GitHub Pages, self-hosting, air-gapped installs
 
 ## Presenting or teaching from this
 

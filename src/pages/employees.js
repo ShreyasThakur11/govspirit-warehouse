@@ -185,7 +185,7 @@
 
     const withAccuracy = employees.filter((e) => Format.isNumeric(e.accuracy_rate));
     if (withAccuracy.length) {
-      // Accuracy clusters in the high nineties, so a 0–100 axis would flatten
+      // Accuracy clusters in the high nineties, so a 0 to 100 axis would flatten
       // every bar. The axis starts just below the lowest observed value.
       const values = withAccuracy.map((e) => Format.toNumber(e.accuracy_rate, 0));
       const floor = Math.max(0, Math.floor(Math.min(...values) - 2));

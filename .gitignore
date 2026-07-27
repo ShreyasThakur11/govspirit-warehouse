@@ -61,3 +61,6 @@ desktop.ini
 !docs/**/*.xlsx
 data/
 uploads/
+
+# The deck builder pulls pptxgenjs in on demand and does not save it
+docs/presentation/*.pdf

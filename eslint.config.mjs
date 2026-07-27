@@ -39,7 +39,7 @@ const browserGlobals = {
 };
 
 const vendorGlobals = {
-  // Loaded on demand or from the CDN — see index.html.
+  // Loaded on demand or from the CDN. See index.html.
   Chart: 'readonly',
   XLSX: 'readonly',
   jspdf: 'readonly',
@@ -77,7 +77,7 @@ export default [
       'no-param-reassign': ['warn', { props: false }],
       'consistent-return': 'warn',
 
-      // Safety — these are the classes of bug this codebase actually had.
+      // Safety. These are the classes of bug this codebase actually had.
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       'no-alert': 'error',
       'no-eval': 'error',
@@ -94,7 +94,7 @@ export default [
   },
   {
     // Verification scripts run under Node, not in the browser.
-    files: ['eslint.config.mjs', 'scripts/**/*.mjs'],
+    files: ['eslint.config.mjs', 'scripts/**/*.mjs', 'docs/**/*.mjs'],
     languageOptions: {
       sourceType: 'module',
       globals: {
