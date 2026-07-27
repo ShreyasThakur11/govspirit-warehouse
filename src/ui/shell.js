@@ -83,7 +83,7 @@
           ${Icons.brandMark(26)}
           <span class="brand-text">
             <span class="brand-name">GovSpirit</span>
-            <span class="brand-tagline">Excise warehouse intelligence</span>
+            <span class="brand-tagline">Excise depot analytics</span>
           </span>
         </div>
 

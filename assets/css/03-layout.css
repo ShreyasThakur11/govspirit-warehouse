@@ -115,8 +115,12 @@
   flex-shrink: 0;
 }
 
+/* The brand block must be allowed to shrink, or a long tagline pushes past the
+   sidebar edge instead of truncating. min-width on a flex child defaults to
+   auto, which is the whole reason overflow escapes here. */
 .brand-text {
   min-width: 0;
+  overflow: hidden;
 }
 
 .brand-name {
@@ -127,6 +131,8 @@
   line-height: var(--leading-tight);
   color: var(--ink-strong);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand-tagline {
@@ -137,6 +143,8 @@
   letter-spacing: var(--tracking-caps);
   color: var(--ink-muted);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-nav {

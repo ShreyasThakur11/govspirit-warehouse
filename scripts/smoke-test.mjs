@@ -182,6 +182,40 @@ try {
     pass(`all ${VIEWS.length} views clean at ${width}px`);
   }
 
+  /* ── Clipped chrome text ──────────────────────────────────────────────────
+     Strings in the shell are ours, not the operator's, so any of them being
+     cut off is a defect rather than unavoidable truncation of long user data.
+     The sidebar tagline overflowed its container this way and the only signal
+     was a screenshot.                                                        */
+
+  for (const width of [1280, 768, 375]) {
+    await page.setViewport({ width, height: 900 });
+    await new Promise((resolve) => setTimeout(resolve, 250));
+
+    const clipped = await page.evaluate(() => {
+      const found = [];
+      document.querySelectorAll('#sidebar *, #topbar *').forEach((el) => {
+        if (el.children.length > 0) return; // only leaf nodes hold text
+        const text = (el.textContent || '').trim();
+        if (!text) return;
+        // .visually-hidden is clipped to a 1px box on purpose: that is how the
+        // screen-reader-only pattern works, and it is not a layout fault.
+        if (el.closest('.visually-hidden')) return;
+        const style = getComputedStyle(el);
+        if (style.visibility === 'hidden' || style.display === 'none') return;
+        if (el.scrollWidth > el.clientWidth + 1 && el.clientWidth > 0) {
+          found.push(
+            `${el.className || el.tagName}: "${text.slice(0, 40)}" needs ${el.scrollWidth}px, has ${el.clientWidth}px`
+          );
+        }
+      });
+      return found;
+    });
+
+    if (clipped.length) clipped.forEach((c) => fail(`clipped chrome text @ ${width}px: ${c}`));
+    else pass(`no clipped chrome text at ${width}px`);
+  }
+
   /* ── Theme ────────────────────────────────────────────────────────────── */
 
   await page.setViewport({ width: 1280, height: 900 });
